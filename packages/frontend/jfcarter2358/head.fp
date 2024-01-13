@@ -1,5 +1,5 @@
 ```yaml
-title: WSC
+title: floorplan
 ```
 
 ```html

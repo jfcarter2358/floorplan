@@ -1,1 +1,1 @@
-# Web Source Compiler (WSC)
+# Web Source Compiler (floorplan)

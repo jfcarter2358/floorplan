@@ -7,23 +7,23 @@ install:
 format:
   help: Format Python code
   cmd: |
-    black web-source-compiler
+    black floorplan
     black scripts
 
 lint:
   help: Lint Python code
   cmd: |
-    pylint web-source-compiler/*
+    pylint floorplan/*
 
 static:
   help: Static check Python code
   cmd: |
-    mypy web-source-compiler
+    mypy floorplan
 
 test:
   help: Test package and output coverage report
   cmd: |
-    pytest --cov=web-source-compiler --cov-report=html --cov-fail-under=95 -W ignore::DeprecationWarning -vv
+    pytest --cov=floorplan --cov-report=html --cov-fail-under=95 -W ignore::DeprecationWarning -vv
 
 build:
   help: Build package

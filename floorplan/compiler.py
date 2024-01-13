@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import logging
 import re
 from typing import Any
-from web_source_compiler.config import Config
+from floorplan.config import Config
 from copy import deepcopy
 import shutil
 import sys
@@ -21,7 +21,7 @@ CSS_KEYWORD = 'css'
 
 @dataclass_json
 @dataclass
-class WSCObject:
+class floorplanObject:
     name: str
     props: dict
     imports: list[str]
@@ -80,7 +80,7 @@ class WSCObject:
             return self.get_prop('.'.join(parts[1:]), props[parts[0]], path)
         else:
             if not parts[0] in props:
-                raise KeyError(f'Property {parts[0]} is not present in WSC object properties (.{full_path})')
+                raise KeyError(f'Property {parts[0]} is not present in floorplan object properties (.{full_path})')
             return props[parts[0]]
         
     def set_props(self, old_props: dict, new_props: dict) -> None:
@@ -97,15 +97,15 @@ class WSCObject:
         return f'{self.to_json()}'
     
     def __repr__(self) -> str:
-        return f"WSCObject({self.to_json()[1:-1]})"
+        return f"floorplanObject({self.to_json()[1:-1]})"
 
 class Compiler:
     def __init__(self) -> None:
         self.objs = {}
 
     def do_compile(self, config: Config) -> None:
-        files = [f for f in os.listdir(config.project_dir) if f.endswith('.wsc')]
-        names = [f[:-4] for f in files]
+        files = [f for f in os.listdir(config.project_dir) if f.endswith('.fp')]
+        names = [f[:-3] for f in files]
 
         for idx, filename in enumerate(files):
             self.load_object(filename, names[idx], config)
@@ -145,8 +145,8 @@ class Compiler:
         css = ''
         imports = []
 
-        with open(path, 'r', encoding='utf-8') as wsc_file:
-            lines = wsc_file.read().split('\n')
+        with open(path, 'r', encoding='utf-8') as floorplan_file:
+            lines = floorplan_file.read().split('\n')
 
         js = self.get_block(lines, JS_KEYWORD)
         html = self.get_block(lines, HTML_KEYWORD)
@@ -179,19 +179,19 @@ class Compiler:
                         continue
                     imports.append(line[len(IMPORT_KEYWORD):])
 
-        obj = WSCObject(name, props, imports, js, html, css, required, js, html, css, deepcopy(props))
+        obj = floorplanObject(name, props, imports, js, html, css, required, js, html, css, deepcopy(props))
         self.objs[name] = obj
 
         for import_name in imports:
             parts = import_name.split('.')
             module_name = parts[0]
             if not module_name in config.dependencies:
-                raise KeyError(f'module {import_name} does not exist in project, add it using "wsc add ..."')
-            module_path = config.dependencies[module_name]
+                raise KeyError(f'module {import_name} does not exist in project, add it using "floorplan add ..."')
+            module_path = config.dependencies[module_name].install_path
             module_subpath = "/".join(parts[1:])
-            self.load_object(f'{module_path}/{module_subpath}.wsc', import_name, config)
+            self.load_object(f'{module_path}/{module_subpath}.fp', import_name, config)
 
-    def replace_modules(self, obj: WSCObject, config: Config) -> None:
+    def replace_modules(self, obj: floorplanObject, config: Config) -> None:
         obj.replace_refs()
         out = []
         lines = obj.html.split('\n')

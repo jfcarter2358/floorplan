@@ -5,7 +5,7 @@ import jfcarter2358.status
 ```
 
 ```yaml
-title: WSC Test
+title: floorplan Test
 color: '#A3BE8C'
 links:
     swagger: /swagger/index.html

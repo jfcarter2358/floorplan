@@ -7,7 +7,7 @@ import jfcarter2358.page_darken
 ```
 
 ```yaml
-title: WSC Test
+title: floorplan Test
 color: '#A3BE8C'
 content: |
   <div class="card-container w3-container">
