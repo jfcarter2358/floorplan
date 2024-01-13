@@ -79,12 +79,32 @@ def cli_init():
 @click.option("--log-level", "-l", type=click.Choice(list(LOG_LEVELS.keys())), help=f'Log level to use, valid levels are {",".join(list(LOG_LEVELS.keys()))}', default="INFO", show_default=True)
 def init(path: str, dist_dir: str, static_dir: str, log_level: str) -> None:
     logging.basicConfig(level=LOG_LEVELS[log_level], format="%(message)s", datefmt="[%X]", handlers=[RichHandler()])
-    pwd = os.getcwd()
     logging.info(f"Initializing floorplan configuration at {path}/.floorplan.yaml")
 
     config = Config(f'{path}', f'{dist_dir}', f'{static_dir}', {'local': Dependency('local', 'src', '', '', 'src', 'file', '', '')})
     config.write_config()
     logging.info('Done!')
+
+@click.group()
+def cli_install():
+    pass
+
+@cli_install.command()
+@click.option("--log-level", "-l", type=click.Choice(list(LOG_LEVELS.keys())), help=f'Log level to use, valid levels are {",".join(list(LOG_LEVELS.keys()))}', default="INFO", show_default=True)
+def install(log_level: str) -> None:
+    print('install!')
+    logging.basicConfig(level=LOG_LEVELS[log_level], format="%(message)s", datefmt="[%X]", handlers=[RichHandler()])
+    config = Config('', '', '', {})
+    config.read_config()
+
+    print(config.dependencies)
+    names = list(config.dependencies.keys())
+    for name in names:
+        print(f'Removing {name}')
+        dep = config.dependencies[name]
+        config.remove_dependency(dep.name)
+        config.add_dependency(dep.name, dep.source, dep.protocol, dep.username, dep.password, dep.version, dep.path)
+        config.write_config()
 
 @click.group()
 def cli_remove():
@@ -101,7 +121,7 @@ def remove(name: str, log_level: str) -> None:
     config.write_config()
     logging.info('Done!')
 
-click_cli = click.CommandCollection(sources=[cli_add, cli_clean, cli_compile, cli_init, cli_remove])
+click_cli = click.CommandCollection(sources=[cli_add, cli_clean, cli_compile, cli_init, cli_install, cli_remove])
 
 if __name__ == '__main__':
     click_cli()

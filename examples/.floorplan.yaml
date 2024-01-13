@@ -1,0 +1,13 @@
+dependencies:
+  jfcarter2358:
+    install_path: .floorplan-packages/jfcarter2358
+    name: jfcarter2358
+    password: ''
+    path: packages/frontend/jfcarter2358
+    protocol: git
+    source: git@github.com:jfcarter2358/floorplan
+    username: ''
+    version: main
+dist_dir: dist
+project_dir: .
+static_dir: static

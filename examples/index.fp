@@ -1,5 +1,5 @@
 ```yaml
-title: My First floorplan Page
+title: My First WSC Page
 color: '#FA7538'
 themes:
     name: light
